@@ -87,18 +87,15 @@ class MolkkyGame
         }
     }
 
-    public function score($name)
+    public function score($name, $lap=null)
     {
         $score = 0;
         $playerRolls = $this->rolls[$name];
-        for ($i = 0; $i < count($playerRolls); $i++) {
+        $index = $lap !== null ? $lap + 1 : count($playerRolls);
+        for ($i = 0; $i < $index; $i++) {
             $score += $playerRolls[$i];
-            if ($this->lapOrder) {
-                foreach ($this->rolls as $playerName => $rolls) {
-                    if (array_search($playerName, $this->lapOrder) > array_search($name, $this->lapOrder) && $this->getLapScore($playerName, $i) === $score) {
-                        $score = 0;
-                    }
-                }
+            if ($this->hasPlayerBeenEqualed($name, $score, $i)) {
+                $score = 0;
             }
             if ($score > 50) {
                 $score = 25;
@@ -108,17 +105,21 @@ class MolkkyGame
         return $score;
     }
 
-    public function getLapScore($name, $lap)
+    private function isPlayerAAfterPlayerB($playerA, $playerB)
     {
-        $score = 0;
-        $playerRolls = $this->rolls[$name];
-        for ($i = 0; $i <= $lap; $i++) {
-            $score += $playerRolls[$i];
-            if ($score > 50) {
-                $score = 25;
-            }
-        }
+        return array_search($playerA, $this->lapOrder) > array_search($playerB, $this->lapOrder);
+    }
 
-        return $score;
+    private function hasPlayerBeenEqualed($name, $actualScore, $lap)
+    {
+      if ($this->lapOrder) {
+          foreach ($this->rolls as $playerName => $rolls) {
+              if ($this->isPlayerAAfterPlayerB($playerName, $name) && $this->score($playerName, $lap) === $actualScore) {
+                  return true;
+              }
+          }
+      }
+
+      return false;
     }
 }
