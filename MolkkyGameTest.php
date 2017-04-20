@@ -28,6 +28,12 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(25, $this->molkky->score('Aurore'));
     }
 
+    public function testSeveralPinHaveFallen()
+    {
+        $this->molkky->knockOver('Aurore', [12,9,6,7]);
+        $this->assertEquals(4, $this->molkky->score('Aurore'));
+    }
+
     private function knockOverTen($pin)
     {
         for ($i=0; $i < 10 ; $i++) {
@@ -47,7 +53,11 @@ class MolkkyGame
 
     public function knockOver($name, $pins)
     {
-        $this->score += $pins[0];
+        if (count($pins) > 1) {
+            $this->score += count($pins);
+        } else {
+            $this->score += $pins[0];
+        }
         if ($this->score > 50) {
             $this->score = 25;
         }
