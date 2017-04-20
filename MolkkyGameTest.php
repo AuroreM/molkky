@@ -21,6 +21,13 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
         $this->assertSame(50, $this->molkky->score('Aurore'));
     }
 
+    public function testScoreCanNotExceedFifty()
+    {
+        $this->knockOverTen(4);
+        $this->molkky->knockOver('Aurore', [12]);
+        $this->assertEquals(25, $this->molkky->score('Aurore'));
+    }
+
     private function knockOverTen($pin)
     {
         for ($i=0; $i < 10 ; $i++) {
@@ -41,6 +48,9 @@ class MolkkyGame
     public function knockOver($name, $pins)
     {
         $this->score += $pins[0];
+        if ($this->score > 50) {
+            $this->score = 25;
+        }
     }
 
     public function score($name)
