@@ -34,6 +34,18 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(4, $this->molkky->score('Aurore'));
     }
 
+    public function testIsAMutliPlayersGame()
+    {
+        for ($i=0; $i < 10 ; $i++) {
+            $this->molkky->knockOver('Geoffrey', [3]);
+        }
+        for ($i=0; $i < 10 ; $i++) {
+            $this->molkky->knockOver('Paul', [5]);
+        }
+        $this->assertEquals(30, $this->molkky->score('Geoffrey'));
+        $this->assertEquals(50, $this->molkky->score('Paul'));
+    }
+
     private function knockOverTen($pin)
     {
         for ($i=0; $i < 10 ; $i++) {
@@ -44,7 +56,7 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
 
 class MolkkyGame
 {
-    private $score;
+    private $rolls;
 
     public function initiateOrder($players)
     {
@@ -54,17 +66,23 @@ class MolkkyGame
     public function knockOver($name, $pins)
     {
         if (count($pins) > 1) {
-            $this->score += count($pins);
+           $this->rolls[$name][] += count($pins);
         } else {
-            $this->score += $pins[0];
-        }
-        if ($this->score > 50) {
-            $this->score = 25;
+           $this->rolls[$name][] += $pins[0];
         }
     }
 
     public function score($name)
     {
-        return $this->score;
+        $score = 0;
+        $playerRolls = $this->rolls[$name];
+        for ($i = 0; $i < count($playerRolls); $i++) {
+            $score += $playerRolls[$i];
+            if ($score > 50) {
+                $score = 25;
+            }
+        }
+
+        return $score;
     }
 }
