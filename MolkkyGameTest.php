@@ -56,6 +56,18 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(20, $this->molkky->score('Paul'));
     }
 
+    public function testGoBackToZeroIfRandomPlayerHasBeenCaughtUp()
+    {
+        $this->molkky->initiateOrder(['Geoffrey', 'Paul']);
+        $this->molkky->knockOver('Geoffrey', [3]);
+        $this->molkky->knockOver('Paul', [8]);
+        $this->molkky->knockOver('Geoffrey', [5]);
+        $this->molkky->knockOver('Paul', [2]);
+
+        $this->assertEquals(8, $this->molkky->score('Geoffrey'));
+        $this->assertEquals(2, $this->molkky->score('Paul'));
+    }
+
     private function knockOverTen($name, $pin)
     {
         for ($i=0; $i < 10 ; $i++) {
