@@ -11,19 +11,19 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
 
     public function testNoPinHasFallen()
     {
-        $this->knockOverTen(0);
+        $this->knockOverTen('Aurore', 0);
         $this->assertSame(0, $this->molkky->score('Aurore'));
     }
 
     public function testOnePinHasFallen()
     {
-        $this->knockOverTen(5);
+        $this->knockOverTen('Aurore', 5);
         $this->assertSame(50, $this->molkky->score('Aurore'));
     }
 
     public function testScoreCanNotExceedFifty()
     {
-        $this->knockOverTen(4);
+        $this->knockOverTen('Aurore', 4);
         $this->molkky->knockOver('Aurore', [12]);
         $this->assertEquals(25, $this->molkky->score('Aurore'));
     }
@@ -36,20 +36,16 @@ class MolkkyGameTest extends PHPUnit_Framework_TestCase
 
     public function testIsAMutliPlayersGame()
     {
-        for ($i=0; $i < 10 ; $i++) {
-            $this->molkky->knockOver('Geoffrey', [3]);
-        }
-        for ($i=0; $i < 10 ; $i++) {
-            $this->molkky->knockOver('Paul', [5]);
-        }
+        $this->knockOverTen('Geoffrey', 3);
+        $this->knockOverTen('Paul', 5);
         $this->assertEquals(30, $this->molkky->score('Geoffrey'));
         $this->assertEquals(50, $this->molkky->score('Paul'));
     }
 
-    private function knockOverTen($pin)
+    private function knockOverTen($name, $pin)
     {
         for ($i=0; $i < 10 ; $i++) {
-            $this->molkky->knockOver('Aurore', [$pin]);
+            $this->molkky->knockOver($name, [$pin]);
         }
     }
 }
