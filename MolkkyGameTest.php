@@ -2,22 +2,30 @@
 
 class MolkkyGameTest extends PHPUnit_Framework_TestCase
 {
+    private $molkky;
+
+    public function setUp()
+    {
+        $this->molkky = new MolkkyGame();
+    }
+
     public function testNoPinHasFallen()
     {
-        $molkky = new MolkkyGame();
-        for ($i = 0; $i < 10; $i++) {
-            $molkky->knockOver('Aurore', [0]);
-        }
-        $this->assertSame(0, $molkky->score('Aurore'));
+        $this->knockOverTen(0);
+        $this->assertSame(0, $this->molkky->score('Aurore'));
     }
 
     public function testOnePinHasFallen()
     {
-      $molkky = new MolkkyGame();
-      for ($i = 0; $i < 10; $i++) {
-          $molkky->knockOver('Aurore', [5]);
-      }
-        $this->assertSame(50, $molkky->score('Aurore'));
+        $this->knockOverTen(5);
+        $this->assertSame(50, $this->molkky->score('Aurore'));
+    }
+
+    private function knockOverTen($pin)
+    {
+        for ($i=0; $i < 10 ; $i++) {
+            $this->molkky->knockOver('Aurore', [$pin]);
+        }
     }
 }
 
